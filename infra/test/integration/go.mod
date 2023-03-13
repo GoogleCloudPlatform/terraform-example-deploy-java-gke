@@ -2,7 +2,10 @@ module github.com/HSA-Integration/Migrate-Legacy-Java-App-GKE/infra/test/integra
 
 go 1.19
 
-require github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.4.1
+require (
+	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.4.1
+	github.com/stretchr/testify v1.7.0
+)
 
 require (
 	cloud.google.com/go v0.83.0 // indirect
@@ -41,7 +44,6 @@ require (
 	github.com/mitchellh/go-testing-interface v1.14.2-0.20210217184823-a52172cd2f64 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/tidwall/gjson v1.12.1 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
@@ -55,7 +57,7 @@ require (
 	golang.org/x/mod v0.4.2 // indirect
 	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
 	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c // indirect
-	golang.org/x/sys v0.0.0-20210603125802-9665404d3644 // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.5 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
