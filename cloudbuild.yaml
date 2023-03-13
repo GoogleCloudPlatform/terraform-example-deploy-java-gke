@@ -1,0 +1,69 @@
+# Copyright 2023 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+steps:
+- name: "bash"
+  id: validate_tfvars
+  dir: "tools"
+  entrypoint: "bash"
+  args: ['validate_tfvars.sh', '${_REGION}', '${_ZONES}']
+
+- name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+  id: enable_api
+  script: |
+    gcloud services enable cloudresourcemanager.googleapis.com
+
+- name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+  id: create_state_bucket
+  dir: "tools"
+  entrypoint: "bash"
+  args: ["create_tf_bucket.sh", "${PROJECT_ID}"]
+
+- name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+  id: prepare_tf_backend
+  dir: "tools"
+  entrypoint: "bash"
+  args: ["prepare_tf_backend.sh", "${PROJECT_ID}"]
+
+- name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+  id: prepare_tfvars
+  dir: "tools"
+  entrypoint: "bash"
+  args: ['prepare_tfvars.sh', '${_REGION}', '${_ZONES}', '${_GCR_IMAGE}', '${_CLUSTER_NAME}']
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  id: prepare_datadog_terraform
+  dir: 'tools'
+  entrypoint: 'bash'
+  args: ['prepare_datadog_tf.sh', '${_DATADOG_API_KEY}', '${_DATADOG_APP_KEY}']
+
+- name: "hashicorp/terraform"
+  id: terraform_deploy
+  dir: "infra"
+  env:
+  - PROJECT_ID=$PROJECT_ID
+  script: |
+    terraform init
+    terraform apply -var "project_id=$PROJECT_ID" -auto-approve
+
+substitutions:
+  _CLUSTER_NAME: "xwiki"
+  _GCR_IMAGE: gcr.io/migrate-legacy-java-app-gke/hsa-xwiki:latest
+  _REGION: "us-west1"
+  _ZONES: "us-west1-a us-west1-b"
+  _DATADOG_API_KEY: ""
+  _DATADOG_APP_KEY: ""
+
+options:
+  logging: CLOUD_LOGGING_ONLY

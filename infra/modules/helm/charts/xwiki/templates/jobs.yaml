@@ -1,0 +1,114 @@
+# Copyright 2023 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: '{{ .Values.project_id }}-xwiki-job-{{ .Values.region }}'
+spec:
+  template:
+    spec:
+      containers:
+      - name: xwiki-migrate-flavor-data
+        image: '{{ .Values.image }}'
+        command:
+        - /bin/sh
+        - -c
+        - |
+            # Set up nfs mount point for extention file
+            export XWIKI_DATA_DIR="/usr/local/xwiki/data"
+            export NFS_FILE_SHARE="${NFS_IP_ADDRESS}:/xwiki_file_share"
+            export MOUNT_FILE_SHARE="/mnt/xwiki_file_share"
+
+            mkdir -p ${MOUNT_FILE_SHARE}
+            mount ${NFS_FILE_SHARE} ${MOUNT_FILE_SHARE} -o nolock
+            test -d ${MOUNT_FILE_SHARE}/file || mkdir -p ${MOUNT_FILE_SHARE}/file
+            umount ${MOUNT_FILE_SHARE}
+
+            # For mount store/file to NFS share
+            test -d ${XWIKI_DATA_DIR}/store/file || mkdir -p ${XWIKI_DATA_DIR}/store/file
+            mount ${NFS_FILE_SHARE}/file ${XWIKI_DATA_DIR}/store/file -o nolock
+            mount | grep store || (echo "Mount store/file folder to NFS was created fail ! " ; exit 1)
+
+            VERSION="14.10.4"
+            XWIKI_FLAVOR_DATA_DIR="/Flavor_${VERSION}_data"
+            MYSQL_IMPORT_SQL_FILE="xwiki_bk_14.10.sql"
+            NFS_SHARE_FILE="file_${VERSION}.tar.gz"
+            XWIKI_DATA_DIR="/usr/local/xwiki/data"
+            CONNECTION_RETRIES=10
+            retries=0
+            while ! mysql -u${DB_USER} --password="${DB_PASSWORD}" -h${DB_HOST} xwiki -e "exit" --connect-timeout=20
+            do
+              retries=$((retries+1))
+              if [ "$retries" -lt $CONNECTION_RETRIES ]; then
+                echo "MySQL server is not ready for login. Retrying in 3 sec..."
+                sleep 3
+              else
+                echo "ERROR: Couldn't login MySQL server ${DB_HOST}!"
+                exit 1
+              fi
+            done
+
+            if sudo test -d ${XWIKI_DATA_DIR}/store/file/xwiki ; then
+              echo "The Xwiki Flavor ${VERSION} share file has already been mounted on NFS folder. Skipping file extraction!"
+            else
+              echo "start to extract share file data tar file ..."
+              tar -zxvf ${XWIKI_FLAVOR_DATA_DIR}/file_${VERSION}.tar.gz -C ${XWIKI_DATA_DIR}/store
+              if [ $? -eq 0 ];then
+                echo "XWiki Flavor share file extraction to NFS folder completed!"
+              else
+                echo "ERROR: Failed to extract XWiki Flavor data to NFS folder."
+                exit 1
+              fi
+            fi
+
+            TABLE_COUNT=$(mysql -u${DB_USER} --password="${DB_PASSWORD}" -h${DB_HOST} xwiki -e "show tables;" | wc -l)
+            if [ ${TABLE_COUNT} -gt 0 ] ; then
+              echo "Xwiki Flavor ${VERSION} table data has already exists. Skipping table data import!"
+            else
+              echo "start to import table data..."
+              tar -zxvf ${XWIKI_FLAVOR_DATA_DIR}/xwiki_mysql_db_bk_${VERSION}.tar.gz -C ${XWIKI_FLAVOR_DATA_DIR}/
+              mysql -u${DB_USER} --password="${DB_PASSWORD}" -h${DB_HOST} xwiki < ${XWIKI_FLAVOR_DATA_DIR}/${MYSQL_IMPORT_SQL_FILE}
+              if [ $? -eq 0 ];then
+                echo "Importing table data has been completed!"
+              else
+                echo "ERROR: Failed to import table data."
+                exit 1
+              fi
+            fi
+            echo "Data migration has completed."
+        env:
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                key: DB_HOST
+                name: '{{ .Values.project_id }}-xwiki-config-maps-{{ .Values.region }}'
+          - name: NFS_IP_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                key: NFS_IP_ADDRESS
+                name: '{{ .Values.project_id }}-xwiki-config-maps-{{ .Values.region }}'
+          - name: DB_USER
+            valueFrom:
+              configMapKeyRef:
+                key: DB_USER
+                name: '{{ .Values.project_id }}-xwiki-config-maps-{{ .Values.region }}'
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: DB_PASSWORD
+                name: '{{ .Values.project_id }}-xwiki-secret-{{ .Values.region }}'
+        securityContext:
+          privileged: true
+      restartPolicy: Never

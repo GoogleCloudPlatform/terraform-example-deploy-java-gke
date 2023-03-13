@@ -1,0 +1,80 @@
+# Copyright 2023 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{ .Values.project_id }}-xwiki-controller-{{ .Values.region }}'
+  labels:
+    app: xwiki
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: xwiki
+  template:
+    metadata:
+      labels:
+        app: xwiki
+    spec:
+      containers:
+        - env:
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                key: DB_HOST
+                name: '{{ .Values.project_id }}-xwiki-config-maps-{{ .Values.region }}'
+          - name: DB_USER
+            valueFrom:
+              configMapKeyRef:
+                key: DB_USER
+                name: '{{ .Values.project_id }}-xwiki-config-maps-{{ .Values.region }}'
+          - name: NFS_IP_ADDRESS
+            valueFrom:
+              configMapKeyRef:
+                key: NFS_IP_ADDRESS
+                name: '{{ .Values.project_id }}-xwiki-config-maps-{{ .Values.region }}'
+          - name: JGROUP_BUCKET_NAME
+            valueFrom:
+              configMapKeyRef:
+                key: JGROUP_BUCKET_NAME
+                name: '{{ .Values.project_id }}-xwiki-config-maps-{{ .Values.region }}'
+          - name: ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                key: ACCESS_KEY
+                name: '{{ .Values.project_id }}-xwiki-secret-{{ .Values.region }}'
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                key: SECRET_KEY
+                name: '{{ .Values.project_id }}-xwiki-secret-{{ .Values.region }}'
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: DB_PASSWORD
+                name: '{{ .Values.project_id }}-xwiki-secret-{{ .Values.region }}'
+          name: '{{ .Values.project_id }}-xwiki-{{ .Values.region }}'
+          image: '{{ .Values.image }}'
+          resources:
+            limits:
+              cpu: "4"
+              memory: 4Gi
+            requests:
+              cpu: "3"
+              memory: 4Gi
+          securityContext:
+            privileged: true
+          ports:
+            - containerPort: 8080

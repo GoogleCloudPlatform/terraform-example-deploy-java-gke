@@ -1,0 +1,46 @@
+# Copyright 2023 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+steps:
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    dir: 'backend/config'
+    env:
+      XWIKI_MIGRATE_FILE_BUCKET=$_XWIKI_MIGRATE_FILE_BUCKET
+    script: |
+      cp ../../third_party/xwiki/hibernate_gcp.cfg.xml xwiki/
+      mkdir Flavor_14.10.4_data
+      cd Flavor_14.10.4_data
+      gcloud storage cp gs://$XWIKI_MIGRATE_FILE_BUCKET/xwiki_14.10.4_flavor/extension_14.10.4.tar.gz ./
+      gcloud storage cp gs://$XWIKI_MIGRATE_FILE_BUCKET/xwiki_14.10.4_flavor/file_14.10.4.tar.gz ./
+      gcloud storage cp gs://$XWIKI_MIGRATE_FILE_BUCKET/xwiki_14.10.4_flavor/xwiki_mysql_db_bk_14.10.4.tar.gz ./
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args: ['auth', 'configure-docker', '-q']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    dir: 'backend/config'
+    args: ['build', '-t', 'gcr.io/${PROJECT_ID}/${_XWIKI_CONTAINER_REGISTRY}:${_XWIKI_IMAGE_TAG}', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    dir: 'backend/config'
+    args: ['push', 'gcr.io/${PROJECT_ID}/${_XWIKI_CONTAINER_REGISTRY}:${_XWIKI_IMAGE_TAG}']
+
+substitutions:
+  _XWIKI_CONTAINER_REGISTRY: "hsa-xwiki"
+  _XWIKI_IMAGE_TAG: "latest"
+  _XWIKI_MIGRATE_FILE_BUCKET: "legacy-xwiki-installed-flavor"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
