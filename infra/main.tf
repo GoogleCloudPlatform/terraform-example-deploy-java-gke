@@ -121,7 +121,7 @@ resource "google_service_account" "jgroup" {
   depends_on = [
     module.project_services
   ]
-  account_id = "xwiki-jroup"
+  account_id = "xwiki-jgroup"
 }
 
 resource "google_project_iam_member" "jgroup_permission" {
