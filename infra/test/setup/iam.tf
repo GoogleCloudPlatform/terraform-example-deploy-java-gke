@@ -14,7 +14,19 @@
 
 locals {
   roles = [
-    "roles/owner",
+    "roles/cloudbuild.builds.builder",
+    "roles/cloudbuild.serviceAgent",
+    "roles/cloudsql.admin",
+    "roles/compute.networkAdmin",
+    "roles/resourcemanager.projectIamAdmin",
+    "roles/secretmanager.admin",
+    "roles/serviceusage.serviceUsageAdmin",
+    "roles/storage.hmacKeyAdmin",
+    "roles/iam.serviceAccountAdmin",
+    "roles/iam.serviceAccountUser",
+    "roles/container.admin",
+    "roles/container.serviceAgent",
+    "roles/logging.admin"
   ]
 }
 
