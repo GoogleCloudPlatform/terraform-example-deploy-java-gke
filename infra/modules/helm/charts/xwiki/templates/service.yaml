@@ -22,6 +22,7 @@ spec:
   selector:
     app: xwiki
   type: LoadBalancer
+  loadBalancerIP: '{{ .Values.loadbalancer_ip }}'
   sessionAffinity: ClientIP
   ports:
   - port: 80
