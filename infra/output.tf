@@ -26,3 +26,8 @@ output "jgroup_bucket_name" {
   description = "The bucket name for jgroup"
   value       = google_storage_bucket.xwiki_jgroup.name
 }
+
+output "xwiki_ip" {
+  description = "The public IP address of the XWiki application"
+  value       = google_compute_global_address.xwiki.address
+}

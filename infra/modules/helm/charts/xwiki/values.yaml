@@ -16,6 +16,7 @@ project_id: ${PROJECT_ID}
 region: ${REGION}
 
 image: ${IMAGE}
+loadbalancer_ip: ${LB_IP}
 
 config_maps:
   db_host: ${DB_HOST}

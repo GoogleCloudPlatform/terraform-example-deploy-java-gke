@@ -134,6 +134,10 @@ resource "google_storage_hmac_key" "jgroup" {
   service_account_email = google_service_account.jgroup.email
 }
 
+resource "google_compute_global_address" "xwiki" {
+  name = "xwiki-lb-http-ip"
+}
+
 module "kubernetes_cluster" {
   depends_on = [
     module.project_services,
@@ -165,6 +169,10 @@ module "helm" {
     {
       name  = "image"
       value = var.image
+    },
+    {
+      name  = "loadbalancer_ip"
+      value = google_compute_global_address.xwiki.address
     },
     {
       name  = "config_maps.db_host"
