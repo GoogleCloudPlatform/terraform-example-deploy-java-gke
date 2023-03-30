@@ -26,4 +26,12 @@ resource "helm_release" "xwiki" {
       value = entry.value.value
     }
   }
+  dynamic "set_sensitive" {
+    for_each = var.secret_entries == null ? [] : var.secret_entries
+    iterator = secret_entry
+    content {
+      name  = secret_entry.value.name
+      value = secret_entry.value.value
+    }
+  }
 }
