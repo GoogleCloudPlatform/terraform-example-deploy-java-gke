@@ -29,5 +29,5 @@ output "jgroup_bucket_name" {
 
 output "xwiki_ip" {
   description = "The public IP address of the XWiki application"
-  value       = google_compute_global_address.xwiki.address
+  value       = google_compute_address.xwiki.address
 }
