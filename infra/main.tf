@@ -138,9 +138,9 @@ resource "google_compute_address" "xwiki" {
   depends_on = [
     module.project_services
   ]
-  name          = "xwiki-lb-http-ip"
-  region = local.location["region"]
-  address_type  = "EXTERNAL"
+  name         = "xwiki-lb-http-ip"
+  region       = local.location["region"]
+  address_type = "EXTERNAL"
 }
 
 module "kubernetes_cluster" {
