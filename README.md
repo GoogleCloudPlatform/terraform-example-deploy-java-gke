@@ -16,5 +16,3 @@ gcloud builds submit .
 ```
 gcloud builds submit . --config=./cloudbuild_destroy.yaml
 ```
-
-
