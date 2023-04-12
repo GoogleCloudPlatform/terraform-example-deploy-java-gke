@@ -24,13 +24,13 @@ variable "project_id" {
 variable "region" {
   description = "google cloud region where the resource will be created."
   type        = string
-  default     = "us-west1"
+  default     = "us-central1"
 }
 
 variable "zones" {
   description = "List of zones are deployment areas within a region."
   type        = list(string)
-  default     = ["us-west1-a", "us-west1-b"]
+  default     = ["us-central1-a", "us-central1-b"]
 }
 
 variable "image" {
