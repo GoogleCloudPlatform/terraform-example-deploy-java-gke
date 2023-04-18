@@ -18,6 +18,8 @@ locals {
     "roles/cloudbuild.serviceAgent",
     "roles/cloudsql.admin",
     "roles/compute.networkAdmin",
+    "roles/logging.admin",
+    "roles/monitoring.admin",
     "roles/resourcemanager.projectIamAdmin",
     "roles/secretmanager.admin",
     "roles/serviceusage.serviceUsageAdmin",
