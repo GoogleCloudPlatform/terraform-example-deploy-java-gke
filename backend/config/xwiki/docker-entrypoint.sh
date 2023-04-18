@@ -156,7 +156,7 @@ function configure() {
   saveConfigurationFile 'xwiki.cfg'
   saveConfigurationFile 'xwiki.properties'
 
-  ## Set up nfs mount point for extention file 
+  ## Set up nfs mount point for extention file
   export XWIKI_DATA_DIR="/usr/local/xwiki/data"
   export NFS_FILE_SHARE="${NFS_IP_ADDRESS}:/xwiki_file_share"
   export MOUNT_FILE_SHARE="/mnt/xwiki_file_share"
@@ -171,7 +171,7 @@ function configure() {
   mount ${NFS_FILE_SHARE}/file ${XWIKI_DATA_DIR}/store/file -o nolock
   mount | grep store || (echo "Mount store/file folder to NFS was created fail ! " ; exit 1)
 
-  ## For cluster Jgroup Setting 
+  ## For cluster Jgroup Setting
   echo "observation.remote.enabled = true" | tee -a /usr/local/tomcat/webapps/ROOT/WEB-INF/xwiki.properties
   echo "observation.remote.channels = tcp" | tee -a /usr/local/tomcat/webapps/ROOT/WEB-INF/xwiki.properties
   sed -i "s#JGROUP_BUCKET_NAME#${JGROUP_BUCKET_NAME}#g" /usr/local/tomcat/webapps/ROOT/WEB-INF/observation/remote/jgroups/tcp.xml

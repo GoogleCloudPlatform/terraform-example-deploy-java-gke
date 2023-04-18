@@ -1,3 +1,4 @@
+#!/bin/bash
 # Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +15,12 @@
 
 PROJECT_ID=$1
 
-bucketName=tf-backend-xwiki-gke-`gcloud projects list --filter PROJECT_ID=$PROJECT_ID --format="value(projectNumber)"`
+bucketName=tf-backend-xwiki-gke-$(gcloud projects list --filter PROJECT_ID="${PROJECT_ID}" --format="value(projectNumber)")
 
-status=$(gcloud storage buckets describe gs://$bucketName 2>/dev/null)
+status=$(gcloud storage buckets describe gs://"${bucketName}" 2>/dev/null)
 if [ -z "$status" ]; then
         echo "bucket not exist, create bucket by gcloud command"
-        gcloud storage buckets create gs://$bucketName
+        gcloud storage buckets create gs://"${bucketName}"
 else
         echo "bucket exists"
 fi

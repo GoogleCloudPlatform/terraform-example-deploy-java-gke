@@ -1,3 +1,4 @@
+#!/bin/ash
 # Copyright 2023 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,9 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-PROJECT_ID=$1
+PROJECT_ID="$1"
 
-bucketName=tf-backend-xwiki-gke-`gcloud projects list --filter PROJECT_ID=$PROJECT_ID --format="value(projectNumber)"`
+bucketName=tf-backend-xwiki-gke-$(gcloud projects list --filter PROJECT_ID="${PROJECT_ID}" --format="value(projectNumber)")
 
 # Generate tf_backend.tf by bucketName
 cat << EOF > ../infra/tf_backend.tf

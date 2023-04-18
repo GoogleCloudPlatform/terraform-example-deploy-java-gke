@@ -28,34 +28,34 @@ CLUSTER_NAME="$(gcloud container clusters list | cut -d ":" -f2 | head -1)"
 echo "The current used cluster name is ${CLUSTER_NAME}"
 
 REGION=$(gcloud container clusters list --format="value(LOCATION)")
-gcloud container clusters get-credentials ${CLUSTER_NAME} --zone $REGION
+gcloud container clusters get-credentials "${CLUSTER_NAME}" --zone "${REGION}"
 
 SERVICE_NAME=$(kubectl get service | grep "LoadBalancer" | cut -d " " -f1)
 echo "The Current used expose service name is $SERVICE_NAME"
-kubectl patch services ${SERVICE_NAME} -p '{"spec": {"sessionAffinity": "None"}}'
+kubectl patch services "${SERVICE_NAME}" -p '{"spec": {"sessionAffinity": "None"}}'
 
 TYPE=GKE
 
 JMETER_DIR="${PWD}/apache-jmeter-5.5"
-test -d ${JMETER_DIR}/plan || mkdir ${JMETER_DIR}/plan
+test -d "${JMETER_DIR}/plan" || mkdir "${JMETER_DIR}/plan"
 DATE="$(date +%Y-%m%d-%H%M)"
 
 case $TYPE in
        "GCE")
   	    wget https://storage.googleapis.com/jmeter-load-test-2023013117/xwiki_load_test.jmx -O ./xwiki_load_test.jmx
-            cp xwiki_load_test.jmx ${JMETER_DIR}/plan/
+            cp xwiki_load_test.jmx "${JMETER_DIR}/plan/"
             JMETER_CONFIG="${JMETER_DIR}/plan/xwiki_load_test.jmx"
             ;;
 
        "GKE")
   	    wget https://storage.googleapis.com/jmeter-load-test-2023013117/xwiki_load_test_gke_30.jmx -O ./xwiki_load_test_gke_30.jmx
-            cp xwiki_load_test_gke_30.jmx ${JMETER_DIR}/plan/
+            cp xwiki_load_test_gke_30.jmx "${JMETER_DIR}/plan/"
             JMETER_CONFIG="${JMETER_DIR}/plan/xwiki_load_test_gke_30.jmx"
             ;;
 esac
 
 
-sed -i "s/LOAD_BALANCER_IP/${LB_IP}/g" ${JMETER_CONFIG}
-/bin/sh ${JMETER_DIR}/bin/jmeter -n -t ${JMETER_CONFIG} -l output_gcp_${DATE}.jtl -j jmeter_${DATE}.log
+sed -i "s/LOAD_BALANCER_IP/${LB_IP}/g" "${JMETER_CONFIG}"
+/bin/sh "${JMETER_DIR}/bin/jmeter" -n -t "${JMETER_CONFIG}" -l output_gcp_"${DATE}".jtl -j jmeter_"${DATE}".log
 
 #sh -x run_load_test_v1.sh "${LB_IP}" "GKE" &
