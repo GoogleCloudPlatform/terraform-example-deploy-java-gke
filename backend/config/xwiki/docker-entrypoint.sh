@@ -135,7 +135,9 @@ function configure() {
   fi
 
   echo '  Generating authentication validation and encryption keys...'
+  # shellcheck disable=SC2002
   xwiki_set_cfg 'xwiki.authentication.validationKey' "$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
+  # shellcheck disable=SC2002
   xwiki_set_cfg 'xwiki.authentication.encryptionKey' "$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
 
   echo '  Setting permanent directory...'
@@ -143,7 +145,7 @@ function configure() {
   echo '  Configure libreoffice...'
   xwiki_set_properties 'openoffice.autoStart' 'true'
 
-  if [ $INDEX_HOST != 'localhost' ]; then
+  if [ "$INDEX_HOST" != 'localhost' ]; then
     echo '  Configuring remote Solr Index'
     xwiki_set_properties 'solr.type' 'remote'
     xwiki_set_properties 'solr.remote.url' "http://$INDEX_HOST:$INDEX_PORT/solr/xwiki"
