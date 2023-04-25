@@ -32,6 +32,11 @@ output "xwiki_ip" {
   value       = google_compute_address.xwiki.address
 }
 
+output "xwiki_url" {
+  description = "The public URL of the XWiki application"
+  value       = "http://${google_compute_address.xwiki.address}"
+}
+
 output "neos_walkthrough_url" {
   description = "Neos Tutorial URL"
   value       = "https://console.cloud.google.com/products/solutions/deployments?walkthrough_id=solutions-in-console--deploy-java-app-gke--deploy-java-app-gke_tour"

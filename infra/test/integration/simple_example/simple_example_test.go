@@ -32,10 +32,23 @@ func TestSimpleExample(t *testing.T) {
 	example.DefineVerify(func(assert *assert.Assertions) {
 
 		dbIP := example.GetStringOutput("dp_ip")
-		op := gcloud.Run(t, "sql instances describe")
+		//op := gcloud.Run(t, "sql instances describe")
 		fmt.Print(dbIP)
-		fmt.Print(op.String())
+		//fmt.Print(op.String())
 		assert.NotEmpty(dbIP, "db_ip")
+
+        // sample e2e to assert app is working
+		wikiURL := example.GetStringOutput("xwiki_url")
+		isServing := func() (bool, error) {
+			resp, err := http.Get(wikiURL)
+			if err != nil || resp.StatusCode != 200 {
+				// retry if err or status not 200
+				return true, nil
+			}
+			return false, nil
+		}
+		utils.Poll(t, isServing, 20, time.Second*20)
+
 	})
 
 	example.Test()
