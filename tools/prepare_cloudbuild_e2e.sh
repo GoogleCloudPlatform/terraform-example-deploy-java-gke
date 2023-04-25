@@ -70,4 +70,12 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 gcloud projects add-iam-policy-binding $PROJECT_ID \
         --member="serviceAccount:$CLOUDBUILD_SA" \
         --role="roles/logging.admin"
+        
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+        --member="serviceAccount:$CLOUDBUILD_SA" \
+        --role="roles/monitoring.admin"
+        
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+        --member="serviceAccount:$CLOUDBUILD_SA" \
+        --role="roles/storage.admin"
 
