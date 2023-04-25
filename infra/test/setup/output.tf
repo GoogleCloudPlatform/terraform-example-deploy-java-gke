@@ -16,12 +16,3 @@ output "project_id" {
   value = module.project_factory.project_id
 }
 
-output "db_ip" {
-  description = "The IPv4 address assigned for the master instance"
-  value       = module.database.db_ip
-}
-
-output "xwiki_url" {
-  description = "The public URL of the XWiki application"
-  value       = "http://${google_compute_address.xwiki.address}"
-}
