@@ -12,16 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#output "db_ip" {
-#  value = module.simple.db_ip
-#}
-
 output "db_ip" {
-  description = "The IPv4 address assigned for the master instance"
-  value       = module.database.db_ip
+  value       = module.simple.db_ip
 }
 
 output "xwiki_url" {
-  description = "The public URL of the XWiki application"
-  value       = "http://${google_compute_address.xwiki.address}"
+  value       = module.simple.xwiki_url
 }
