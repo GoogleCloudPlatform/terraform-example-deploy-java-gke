@@ -13,9 +13,9 @@
 # limitations under the License.
 
 output "db_ip" {
-  value       = module.simple.db_ip
+  value = module.simple.db_ip
 }
 
 output "xwiki_url" {
-  value       = module.simple.xwiki_url
+  value = module.simple.xwiki_url
 }
