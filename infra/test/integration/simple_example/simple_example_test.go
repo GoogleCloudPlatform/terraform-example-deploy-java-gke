@@ -33,7 +33,7 @@ func TestSimpleExample(t *testing.T) {
 
 	example.DefineVerify(func(assert *assert.Assertions) {
 
-		dbIP := example.GetStringOutput("dp_ip")
+		dbIP := example.GetStringOutput("db_ip")
 		//op := gcloud.Run(t, "sql instances describe")
 		fmt.Print(dbIP)
 		//fmt.Print(op.String())
