@@ -23,7 +23,7 @@ set -e
 
 function first_start() {
   configure
-  touch /usr/local/tomcat/webapps/$CONTEXT_PATH/.first_start_completed
+  touch /usr/local/tomcat/webapps/"$CONTEXT_PATH"/.first_start_completed
 }
 
 function other_starts() {
@@ -37,19 +37,20 @@ function other_starts() {
 # $2 - the setting/property to set
 # $3 - the new value
 function xwiki_replace() {
+  # shellcheck disable=SC2140
   sed -i s~"\#\? \?$2 \?=.*"~"$2=$3"~g "$1"
 }
 
 # $1 - the setting/property to set
 # $2 - the new value
 function xwiki_set_cfg() {
-  xwiki_replace /usr/local/tomcat/webapps/$CONTEXT_PATH/WEB-INF/xwiki.cfg "$1" "$2"
+  xwiki_replace /usr/local/tomcat/webapps/"$CONTEXT_PATH"/WEB-INF/xwiki.cfg "$1" "$2"
 }
 
 # $1 - the setting/property to set
 # $2 - the new value
 function xwiki_set_properties() {
-  xwiki_replace /usr/local/tomcat/webapps/$CONTEXT_PATH/WEB-INF/xwiki.properties "$1" "$2"
+  xwiki_replace /usr/local/tomcat/webapps/"$CONTEXT_PATH"/WEB-INF/xwiki.properties "$1" "$2"
 }
 
 # usage: file_env VAR [DEFAULT]
@@ -79,7 +80,7 @@ file_env() {
 # $2 - the replacement text
 # $3 - the file in which to do the search/replace
 function safesed {
-  sed -i "s/$(echo $1 | sed -e 's/\([[\/.*]\|\]\)/\\&/g')/$(echo $2 | sed -e 's/[\/&]/\\&/g')/g" $3
+  sed -i "s/$(echo "$1" | sed -e 's/\([[\/.*]\|\]\)/\\&/g')/$(echo "$2" | sed -e 's/[\/&]/\\&/g')/g" "$3"
 }
 
 # $1 - the config file name found in WEB-INF (e.g. "xwiki.cfg")
@@ -119,22 +120,24 @@ function configure() {
   if [ "$CONTEXT_PATH" == "ROOT" ]; then
     xwiki_set_cfg 'xwiki.webapppath' ''
   else
-    mv /usr/local/tomcat/webapps/ROOT /usr/local/tomcat/webapps/$CONTEXT_PATH
+    mv /usr/local/tomcat/webapps/ROOT /usr/local/tomcat/webapps/"$CONTEXT_PATH"
   fi
 
   echo 'Replacing environment variables in files'
-  safesed "replaceuser" $DB_USER /usr/local/tomcat/webapps/$CONTEXT_PATH/WEB-INF/hibernate.cfg.xml
-  safesed "replacepassword" $DB_PASSWORD /usr/local/tomcat/webapps/$CONTEXT_PATH/WEB-INF/hibernate.cfg.xml
-  safesed "replacecontainer" $DB_HOST /usr/local/tomcat/webapps/$CONTEXT_PATH/WEB-INF/hibernate.cfg.xml
-  safesed "replacedatabase" $DB_DATABASE /usr/local/tomcat/webapps/$CONTEXT_PATH/WEB-INF/hibernate.cfg.xml
+  safesed "replaceuser" "$DB_USER" /usr/local/tomcat/webapps/"$CONTEXT_PATH"/WEB-INF/hibernate.cfg.xml
+  safesed "replacepassword" "$DB_PASSWORD" /usr/local/tomcat/webapps/"$CONTEXT_PATH"/WEB-INF/hibernate.cfg.xml
+  safesed "replacecontainer" "$DB_HOST" /usr/local/tomcat/webapps/"$CONTEXT_PATH"/WEB-INF/hibernate.cfg.xml
+  safesed "replacedatabase" "$DB_DATABASE" /usr/local/tomcat/webapps/"$CONTEXT_PATH"/WEB-INF/hibernate.cfg.xml
 
   # Set any non-default main wiki database name in the xwiki.cfg file.
   if [ "$DB_DATABASE" != "xwiki" ]; then
-    xwiki_set_cfg "xwiki.db" $DB_DATABASE
+    xwiki_set_cfg "xwiki.db" "$DB_DATABASE"
   fi
 
   echo '  Generating authentication validation and encryption keys...'
+  # shellcheck disable=SC2002
   xwiki_set_cfg 'xwiki.authentication.validationKey' "$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
+  # shellcheck disable=SC2002
   xwiki_set_cfg 'xwiki.authentication.encryptionKey' "$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
 
   echo '  Setting permanent directory...'
@@ -142,7 +145,7 @@ function configure() {
   echo '  Configure libreoffice...'
   xwiki_set_properties 'openoffice.autoStart' 'true'
 
-  if [ $INDEX_HOST != 'localhost' ]; then
+  if [ "$INDEX_HOST" != 'localhost' ]; then
     echo '  Configuring remote Solr Index'
     xwiki_set_properties 'solr.type' 'remote'
     xwiki_set_properties 'solr.remote.url' "http://$INDEX_HOST:$INDEX_PORT/solr/xwiki"
@@ -156,22 +159,22 @@ function configure() {
   saveConfigurationFile 'xwiki.cfg'
   saveConfigurationFile 'xwiki.properties'
 
-  ## Set up nfs mount point for extention file 
+  ## Set up nfs mount point for extention file
   export XWIKI_DATA_DIR="/usr/local/xwiki/data"
   export NFS_FILE_SHARE="${NFS_IP_ADDRESS}:/xwiki_file_share"
   export MOUNT_FILE_SHARE="/mnt/xwiki_file_share"
 
-  mkdir -p ${MOUNT_FILE_SHARE}
-  mount ${NFS_FILE_SHARE} ${MOUNT_FILE_SHARE} -o nolock
-  test -d ${MOUNT_FILE_SHARE}/file || mkdir -p ${MOUNT_FILE_SHARE}/file
-  umount ${MOUNT_FILE_SHARE}
+  mkdir -p "${MOUNT_FILE_SHARE}"
+  mount "${NFS_FILE_SHARE}" "${MOUNT_FILE_SHARE}" -o nolock
+  test -d "${MOUNT_FILE_SHARE}"/file || mkdir -p "${MOUNT_FILE_SHARE}"/file
+  umount "${MOUNT_FILE_SHARE}"
 
   # For mount store/file to NFS share
-  test -d ${XWIKI_DATA_DIR}/store/file || mkdir -p ${XWIKI_DATA_DIR}/store/file
-  mount ${NFS_FILE_SHARE}/file ${XWIKI_DATA_DIR}/store/file -o nolock
+  test -d "${XWIKI_DATA_DIR}"/store/file || mkdir -p "${XWIKI_DATA_DIR}"/store/file
+  mount "${NFS_FILE_SHARE}"/file "${XWIKI_DATA_DIR}"/store/file -o nolock
   mount | grep store || (echo "Mount store/file folder to NFS was created fail ! " ; exit 1)
 
-  ## For cluster Jgroup Setting 
+  ## For cluster Jgroup Setting
   echo "observation.remote.enabled = true" | tee -a /usr/local/tomcat/webapps/ROOT/WEB-INF/xwiki.properties
   echo "observation.remote.channels = tcp" | tee -a /usr/local/tomcat/webapps/ROOT/WEB-INF/xwiki.properties
   sed -i "s#JGROUP_BUCKET_NAME#${JGROUP_BUCKET_NAME}#g" /usr/local/tomcat/webapps/ROOT/WEB-INF/observation/remote/jgroups/tcp.xml

@@ -34,7 +34,7 @@ ALLOW_ENCODED_SLASH="-Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=t
 ALLOW_BACKSLASH="-Dorg.apache.catalina.connector.CoyoteAdapter.ALLOW_BACKSLASH=true"
 SECURERANDOM="-Djava.security.egd=file:/dev/./urandom"
 
-if [[ ! -z "$JAVA_OPTS" ]]; then
+if [[ -n "$JAVA_OPTS" ]]; then
   if [[ ! $JAVA_OPTS =~ .*-Xmx[0-9]+.* ]]; then
     JAVA_OPTS="$JAVA_OPTS $XMX"
   fi

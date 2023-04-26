@@ -61,11 +61,11 @@ RUN rm -rf /usr/local/tomcat/webapps/* && \
 
 #  Install NFS/Mysql Client
 RUN apt-get update
-RUN apt-get install nfs-common netbase tini -y 
+RUN apt-get install nfs-common netbase tini -y
 RUN apt-get update && apt-get install -y mysql-client && rm -rf /var/lib/apt
 
 # Copy the JDBC driver in the XWiki webapp
-# For MYSQL, download the MySQL driver version from the Maven Central repository since there's no up to 
+# For MYSQL, download the MySQL driver version from the Maven Central repository since there's no up to
 # date Debian repository for it anymore.
 ENV MYSQL_JDBC_VERSION="8.0.31"
 ENV MYSQL_JDBC_SHA256="5249e3dc6d6531b37790e3f61845b96db5e41e891d3d8edb0e2e3a1b53ca2f4f"
