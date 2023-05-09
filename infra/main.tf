@@ -60,7 +60,7 @@ resource "google_compute_network" "xwiki" {
   ]
 
   project                 = var.project_id
-  name                    = "xwiki"
+  name                    = "xwiki-gke"
   auto_create_subnetworks = true
 }
 
@@ -111,7 +111,7 @@ resource "google_storage_bucket" "xwiki_jgroup" {
     module.project_services
   ]
 
-  name          = "xwiki-jgroup-${data.google_project.project.number}"
+  name          = "xwiki-jgroup-${data.google_project.project.number}-gke"
   project       = var.project_id
   location      = local.location["region"]
   force_destroy = true
@@ -121,7 +121,7 @@ resource "google_service_account" "jgroup" {
   depends_on = [
     module.project_services
   ]
-  account_id = "xwiki-jgroup"
+  account_id = "xwiki-jgroup-gke"
 }
 
 resource "google_project_iam_member" "jgroup_permission" {

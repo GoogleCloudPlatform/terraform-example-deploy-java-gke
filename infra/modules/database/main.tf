@@ -13,7 +13,7 @@
 # limitations under the License.
 
 resource "google_sql_database_instance" "xwiki" {
-  name             = "xwiki-${var.region}-db"
+  name             = "xwiki-${var.region}-db-gke"
   database_version = "MYSQL_8_0"
   region           = var.region
   settings {
@@ -49,7 +49,7 @@ resource "google_sql_user" "xwiki" {
 }
 
 resource "google_compute_global_address" "sql" {
-  name          = "xwiki-db-address"
+  name          = "xwiki-db-address-gke"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 20
