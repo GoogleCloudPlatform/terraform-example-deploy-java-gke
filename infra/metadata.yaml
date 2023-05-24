@@ -1,0 +1,106 @@
+# Copyright 2023 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: blueprints.cloud.google.com/v1alpha1
+kind: BlueprintMetadata
+metadata:
+  name: terraform-example-deploy-java-gke
+  annotations:
+    config.kubernetes.io/local-config: "true"
+spec:
+  info:
+    title: Deploy Legacy Java App GKE
+    source:
+      repo: https://github.com/GoogleCloudPlatform/terraform-example-deploy-java-gke.git
+      sourceType: git
+    description: {}
+  content:
+    subBlueprints:
+    - name: database
+      location: modules/database
+    - name: helm
+      location: modules/helm
+    - name: kubernetes
+      location: modules/kubernetes
+    examples:
+    - name: simple_example
+      location: examples/simple_example
+  interfaces:
+    variables:
+    - name: cluster_name
+      description: The name of the cluster (required)
+      varType: string
+      defaultValue: xwiki
+    - name: image
+      description: Xwiki docker image
+      varType: string
+      defaultValue: gcr.io/migrate-legacy-java-app-gke/hsa-xwiki:latest
+    - name: project_id
+      description: GCP project ID.
+      varType: string
+      required: true
+    - name: region
+      description: google cloud region where the resource will be created.
+      varType: string
+      defaultValue: us-central1
+    - name: zones
+      description: List of zones are deployment areas within a region.
+      varType: list(string)
+      defaultValue:
+      - us-central1-a
+      - us-central1-b
+    outputs:
+    - name: db_ip
+      description: The IPv4 address assigned for the master instance
+    - name: jgroup_bucket_name
+      description: The bucket name for jgroup
+    - name: neos_walkthrough_url
+      description: Neos Tutorial URL
+    - name: nfs_ip
+      description: Filestore IP address
+    - name: xwiki_ip
+      description: The public IP address of the XWiki application
+    - name: xwiki_url
+      description: The public URL of the XWiki application
+  requirements:
+    roles:
+    - level: Project
+      roles:
+      - roles/cloudbuild.builds.builder
+      - roles/cloudbuild.serviceAgent
+      - roles/cloudsql.admin
+      - roles/compute.networkAdmin
+      - roles/logging.admin
+      - roles/monitoring.admin
+      - roles/resourcemanager.projectIamAdmin
+      - roles/secretmanager.admin
+      - roles/serviceusage.serviceUsageAdmin
+      - roles/storage.hmacKeyAdmin
+      - roles/iam.serviceAccountAdmin
+      - roles/iam.serviceAccountUser
+      - roles/container.admin
+      - roles/container.serviceAgent
+      - roles/logging.admin
+    services:
+    - sourcerepo.googleapis.com
+    - cloudbuild.googleapis.com
+    - storage.googleapis.com
+    - secretmanager.googleapis.com
+    - iam.googleapis.com
+    - cloudresourcemanager.googleapis.com
+    - container.googleapis.com
+    - file.googleapis.com
+    - servicenetworking.googleapis.com
+    - sqladmin.googleapis.com
+    - iam.googleapis.com
