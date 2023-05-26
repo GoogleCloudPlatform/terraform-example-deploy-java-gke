@@ -31,3 +31,8 @@ variable "xwiki_network_self_link" {
   description = "The VPC network self_link to host the k8s cluster"
   type        = string
 }
+
+variable "labels" {
+  description = "A map of key/value label pairs to assign to the resources."
+  type        = map(string)
+}
