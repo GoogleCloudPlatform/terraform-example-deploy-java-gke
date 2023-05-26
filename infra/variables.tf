@@ -44,3 +44,12 @@ variable "cluster_name" {
   type        = string
   default     = "xwiki"
 }
+
+variable "labels" {
+  description = "A map of key/value label pairs to assign to the resources."
+  type        = map(string)
+
+  default = {
+    app = "terraform-example-deploy-java-gke"
+  }
+}

@@ -100,6 +100,7 @@ resource "google_filestore_instance" "xwiki" {
     capacity_gb = 1024
     name        = "xwiki_file_share"
   }
+  labels = var.labels
 }
 
 data "google_project" "project" {
@@ -115,6 +116,7 @@ resource "google_storage_bucket" "xwiki_jgroup" {
   project       = var.project_id
   location      = local.location["region"]
   force_destroy = true
+  labels        = var.labels
 }
 
 resource "google_service_account" "jgroup" {
@@ -155,6 +157,7 @@ module "kubernetes_cluster" {
   region                  = local.location["region"]
   zones                   = local.location["zones"]
   xwiki_network_self_link = google_compute_network.xwiki.self_link
+  labels                  = var.labels
 }
 
 module "helm" {
