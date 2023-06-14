@@ -24,6 +24,7 @@ spec:
     source:
       repo: https://github.com/GoogleCloudPlatform/terraform-example-deploy-java-gke.git
       sourceType: git
+      dir: /infra
     description: {}
   content:
     subBlueprints:
@@ -46,6 +47,11 @@ spec:
       description: Xwiki docker image
       varType: string
       defaultValue: gcr.io/migrate-legacy-java-app-gke/hsa-xwiki:latest
+    - name: labels
+      description: A map of key/value label pairs to assign to the resources.
+      varType: map(string)
+      defaultValue:
+        app: terraform-example-deploy-java-gke
     - name: project_id
       description: GCP project ID.
       varType: string
