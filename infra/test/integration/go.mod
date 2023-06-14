@@ -3,7 +3,7 @@ module github.com/GoogleCloudPlatform/terraform-example-deploy-java-gke/infra/te
 go 1.19
 
 require (
-	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.5.2
+	github.com/GoogleCloudPlatform/cloud-foundation-toolkit/infra/blueprint-test v0.6.0
 	github.com/stretchr/testify v1.8.4
 )
 
