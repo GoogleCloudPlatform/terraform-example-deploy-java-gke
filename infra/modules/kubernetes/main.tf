@@ -47,6 +47,7 @@ resource "google_container_node_pool" "worker_pool" {
       "https://www.googleapis.com/auth/monitoring",
     ]
     disk_size_gb = 75
+    disk_type    = "pd-standard"
   }
 
   autoscaling {
