@@ -1,4 +1,4 @@
-module github.com/HSA-Integration/Migrate-Legacy-Java-App-GKE/infra/test/integration
+module github.com/GoogleCloudPlatform/terraform-example-deploy-java-gke/infra/test/integration
 
 go 1.19
 
