@@ -30,8 +30,8 @@ resource "google_container_cluster" "control_plane" {
   initial_node_count       = 2
   resource_labels          = var.labels
   node_config {
-    machine_type = "n2-standard-4",
-    disk_size_gb = 75,
+    machine_type = "n2-standard-4"
+    disk_size_gb = 75
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",
       "https://www.googleapis.com/auth/devstorage.read_only",
