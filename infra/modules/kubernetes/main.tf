@@ -29,15 +29,6 @@ resource "google_container_cluster" "control_plane" {
   remove_default_node_pool = true
   initial_node_count       = 1
   resource_labels          = var.labels
-}
-
-resource "google_container_node_pool" "worker_pool" {
-  name           = "xwiki-gke-default-pool"
-  location       = var.region
-  node_locations = var.zones
-  cluster        = google_container_cluster.control_plane.name
-  node_count     = 1
-
   node_config {
     machine_type = "c2-standard-4"
     oauth_scopes = [
@@ -49,6 +40,15 @@ resource "google_container_node_pool" "worker_pool" {
     disk_size_gb = 75
     disk_type    = "pd-standard"
   }
+
+}
+
+resource "google_container_node_pool" "worker_pool" {
+  name           = "xwiki-gke-default-pool"
+  location       = var.region
+  node_locations = var.zones
+  cluster        = google_container_cluster.control_plane.name
+  node_count     = 1
 
   autoscaling {
     location_policy = "BALANCED"
