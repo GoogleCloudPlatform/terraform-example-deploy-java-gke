@@ -26,11 +26,12 @@ resource "google_container_cluster" "control_plane" {
   # If you're using google_container_node_pool objects with no default
   # node pool, you'll need to set this to a value of at least 1, alongside setting
   # remove_default_node_pool to true
-  remove_default_node_pool = true
-  initial_node_count       = 1
+#  remove_default_node_pool = true
+  initial_node_count       = 2
   resource_labels          = var.labels
   node_config {
-    machine_type = "n2-standard-4"
+    machine_type = "n2-standard-4",
+    disk_size_gb = 75,
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",
       "https://www.googleapis.com/auth/devstorage.read_only",
@@ -41,16 +42,16 @@ resource "google_container_cluster" "control_plane" {
 
 }
 
-resource "google_container_node_pool" "worker_pool" {
-  name           = "xwiki-gke-default-pool"
-  location       = var.region
-  node_locations = var.zones
-  cluster        = google_container_cluster.control_plane.name
-  node_count     = 1
+#resource "google_container_node_pool" "worker_pool" {
+#  name           = "xwiki-gke-default-pool"
+#  location       = var.region
+#  node_locations = var.zones
+#  cluster        = google_container_cluster.control_plane.name
+#  node_count     = 1
 
-  autoscaling {
-    location_policy = "BALANCED"
-    min_node_count  = 0
-    max_node_count  = 2
-  }
-}
+#  autoscaling {
+#    location_policy = "BALANCED"
+#    min_node_count  = 0
+#    max_node_count  = 2
+#  }
+#}
