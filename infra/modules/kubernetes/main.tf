@@ -37,8 +37,6 @@ resource "google_container_cluster" "control_plane" {
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
-    disk_size_gb = 75
-    disk_type    = "pd-standard"
   }
 
 }
@@ -53,6 +51,6 @@ resource "google_container_node_pool" "worker_pool" {
   autoscaling {
     location_policy = "BALANCED"
     min_node_count  = 0
-    max_node_count  = 3
+    max_node_count  = 2
   }
 }
