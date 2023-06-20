@@ -26,6 +26,9 @@ resource "google_container_cluster" "control_plane" {
   # If you're using google_container_node_pool objects with no default
   # node pool, you'll need to set this to a value of at least 1, alongside setting
   # remove_default_node_pool to true
+  node_config {
+    disk_size_gb = 50
+  }
   remove_default_node_pool = true
   initial_node_count       = 1
   resource_labels          = var.labels
