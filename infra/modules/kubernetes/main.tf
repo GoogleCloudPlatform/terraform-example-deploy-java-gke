@@ -26,9 +26,18 @@ resource "google_container_cluster" "control_plane" {
   # If you're using google_container_node_pool objects with no default
   # node pool, you'll need to set this to a value of at least 1, alongside setting
   # remove_default_node_pool to true
-#  remove_default_node_pool = true
-  initial_node_count       = 2
+  remove_default_node_pool = true
+  initial_node_count       = 1
   resource_labels          = var.labels
+}
+
+resource "google_container_node_pool" "worker_pool" {
+  name           = "xwiki-gke-default-pool"
+  location       = var.region
+  node_locations = var.zones
+  cluster        = google_container_cluster.control_plane.name
+  node_count     = 1
+
   node_config {
     machine_type = "n2-standard-4"
     disk_size_gb = 75
@@ -39,19 +48,9 @@ resource "google_container_cluster" "control_plane" {
       "https://www.googleapis.com/auth/monitoring",
     ]
   }
-
+  autoscaling {
+    location_policy = "BALANCED"
+    min_node_count  = 0
+    max_node_count  = 3
+  }
 }
-
-#resource "google_container_node_pool" "worker_pool" {
-#  name           = "xwiki-gke-default-pool"
-#  location       = var.region
-#  node_locations = var.zones
-#  cluster        = google_container_cluster.control_plane.name
-#  node_count     = 1
-
-#  autoscaling {
-#    location_policy = "BALANCED"
-#    min_node_count  = 0
-#    max_node_count  = 2
-#  }
-#}
