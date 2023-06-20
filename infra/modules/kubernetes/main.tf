@@ -40,7 +40,7 @@ resource "google_container_node_pool" "worker_pool" {
 
   node_config {
     machine_type = "n2-standard-4"
-    disk_size_gb = 75
+    disk_size_gb = 50
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",
       "https://www.googleapis.com/auth/devstorage.read_only",
