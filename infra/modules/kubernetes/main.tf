@@ -26,6 +26,9 @@ resource "google_container_cluster" "control_plane" {
   # If you're using google_container_node_pool objects with no default
   # node pool, you'll need to set this to a value of at least 1, alongside setting
   # remove_default_node_pool to true
+  node_config {
+    disk_size_gb = 50
+  }
   remove_default_node_pool = true
   initial_node_count       = 1
   resource_labels          = var.labels
@@ -39,19 +42,18 @@ resource "google_container_node_pool" "worker_pool" {
   node_count     = 1
 
   node_config {
-    machine_type = "c2-standard-4"
+    machine_type = "n2-standard-4"
+    disk_size_gb = 50
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",
       "https://www.googleapis.com/auth/devstorage.read_only",
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
-    disk_size_gb = 100
   }
-
   autoscaling {
     location_policy = "BALANCED"
     min_node_count  = 0
-    max_node_count  = 3
+    max_node_count  = 1
   }
 }
