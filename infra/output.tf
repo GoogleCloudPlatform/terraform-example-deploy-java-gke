@@ -39,5 +39,5 @@ output "xwiki_url" {
 
 output "neos_walkthrough_url" {
   description = "Neos Tutorial URL"
-  value       = "https://console.cloud.google.com/products/solutions/deployments?walkthrough_id=solutions-in-console--deploy-java-app-gke--deploy-java-app-gke_tour"
+  value       = "http://console.cloud.google.com/products/solutions/deployments?walkthrough_id=panels--sic--deploy-java-gke_toc"
 }
