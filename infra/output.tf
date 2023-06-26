@@ -13,7 +13,7 @@
 # limitations under the License.
 
 output "db_ip" {
-  description = "The IPv4 address assigned for the master instance"
+  description = "The IPv4 address assigned for the main instance"
   value       = module.database.db_ip
 }
 
