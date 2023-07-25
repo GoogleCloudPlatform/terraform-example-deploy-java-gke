@@ -34,4 +34,7 @@ resource "helm_release" "xwiki" {
       value = secret_entry.value.value
     }
   }
+  lifecycle {
+    prevent_destroy = true
+  }
 }
