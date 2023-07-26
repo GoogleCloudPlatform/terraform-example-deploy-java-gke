@@ -27,7 +27,7 @@ resource "google_container_cluster" "control_plane" {
   # node pool, you'll need to set this to a value of at least 1, alongside setting
   # remove_default_node_pool to true
   node_config {
-    disk_size_gb = 50
+    disk_size_gb = 25
   }
   remove_default_node_pool = true
   initial_node_count       = 1
@@ -43,7 +43,7 @@ resource "google_container_node_pool" "worker_pool" {
 
   node_config {
     machine_type = "n2-standard-4"
-    disk_size_gb = 50
+    disk_size_gb = 25
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",
       "https://www.googleapis.com/auth/devstorage.read_only",
