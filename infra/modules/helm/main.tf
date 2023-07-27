@@ -12,6 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+provider "helm" {
+  kubernetes {
+    host                   = "https://${google_container_cluster.control_plane.endpoint}"
+    token                  = data.google_client_config.default.access_token
+    cluster_ca_certificate = base64decode(google_container_cluster.control_plane.master_auth[0].cluster_ca_certificate)
+  }
+}
+
 resource "helm_release" "xwiki" {
   name  = "xwiki"
   chart = "${path.module}/charts/xwiki"
@@ -33,8 +41,5 @@ resource "helm_release" "xwiki" {
       name  = secret_entry.value.name
       value = secret_entry.value.value
     }
-  }
-  lifecycle {
-    prevent_destroy = true
   }
 }
