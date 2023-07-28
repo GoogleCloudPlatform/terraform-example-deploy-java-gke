@@ -168,60 +168,60 @@ provider "helm" {
   }
 }
 
-module "helm" {
+resource "helm_release" "xwiki" {
   depends_on = [
     module.kubernetes_cluster,
   ]
-  source = "./modules/helm"
+  name  = "xwiki"
+  chart = "${path.module}/charts/xwiki"
+  values = [
+    file("${path.module}/charts/xwiki/values.yaml"),
+  ]
 
-  entries = [
-    {
-      name  = "project_id"
-      value = var.project_id
-    },
-    {
-      name  = "region"
-      value = local.location["region"]
-    },
-    {
-      name  = "image"
-      value = var.image
-    },
-    {
-      name  = "loadbalancer_ip"
-      value = google_compute_address.xwiki.address
-    },
-    {
-      name  = "config_maps.db_host"
-      value = module.database.db_ip
-    },
-    {
-      name  = "config_maps.db_user"
-      value = module.database.xwiki_user_name
-    },
-    {
-      name  = "config_maps.nfs_ip_address"
-      value = google_filestore_instance.xwiki.networks[0].ip_addresses[0]
-    },
-    {
-      name  = "config_maps.jgroup_bucket_name"
-      value = google_storage_bucket.xwiki_jgroup.name
-    },
-  ]
-  secret_entries = [
-    {
-      name  = "secrets.access_key"
-      value = google_storage_hmac_key.jgroup.access_id
-    },
-    {
-      name  = "secrets.secret_key"
-      value = google_storage_hmac_key.jgroup.secret
-    },
-    {
-      name  = "secrets.db_password"
-      value = random_password.sql.result
-    },
-  ]
+  set  {
+    name  = "project_id"
+    value = var.project_id
+  }
+  set {
+    name  = "region"
+    value = local.location["region"]
+  }
+  set {
+    name  = "image"
+    value = var.image
+  }
+  set {
+    name  = "loadbalancer_ip"
+    value = google_compute_address.xwiki.address
+  }
+  set {
+    name  = "config_maps.db_host"
+    value = module.database.db_ip
+  }
+  set {
+    name  = "config_maps.db_user"
+    value = module.database.xwiki_user_name
+  }
+  set {
+    name  = "config_maps.nfs_ip_address"
+    value = google_filestore_instance.xwiki.networks[0].ip_addresses[0]
+  }
+  set {
+    name  = "config_maps.jgroup_bucket_name"
+    value = google_storage_bucket.xwiki_jgroup.name
+  }
+  set {
+    name  = "secrets.access_key"
+    value = google_storage_hmac_key.jgroup.access_id
+  }
+  set {
+    name  = "secrets.secret_key"
+    value = google_storage_hmac_key.jgroup.secret
+  }
+  set {
+    name  = "secrets.db_password"
+    value = random_password.sql.result
+  }
 }
 
 resource "google_monitoring_dashboard" "xwiki" {
