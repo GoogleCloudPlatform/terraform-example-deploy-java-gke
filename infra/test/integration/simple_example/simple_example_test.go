@@ -32,7 +32,7 @@ func TestSimpleExample(t *testing.T) {
 	example := tft.NewTFBlueprintTest(t)
 
 	example.DefineVerify(func(assert *assert.Assertions) {
-
+		example.DefaultVerify(assert)
 		dbIP := example.GetStringOutput("db_ip")
 		//op := gcloud.Run(t, "sql instances describe")
 		fmt.Print(dbIP)
