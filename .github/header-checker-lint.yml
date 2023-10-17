@@ -31,6 +31,9 @@ allowedLicenses:
 
 sourceFileExtensions:
   - 'Dockerfile'
+  - 'gitignore'
+  - 'go'
+  - 'sh'
   - 'tf'
   - 'yaml'
   - 'yml'
