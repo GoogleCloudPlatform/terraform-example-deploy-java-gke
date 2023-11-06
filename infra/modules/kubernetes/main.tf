@@ -13,10 +13,11 @@
 # limitations under the License.
 
 resource "google_container_cluster" "control_plane" {
-  name            = var.cluster_name
-  location        = var.region
-  network         = var.xwiki_network_self_link
-  networking_mode = "VPC_NATIVE"
+  name                = var.cluster_name
+  location            = var.region
+  network             = var.xwiki_network_self_link
+  networking_mode     = "VPC_NATIVE"
+  deletion_protection = false
   ip_allocation_policy {
   }
 
