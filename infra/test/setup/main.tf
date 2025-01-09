@@ -14,7 +14,7 @@
 
 module "project_factory" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "14.2.0"
+  version = "17.1.0"
 
   name                    = "ci-gke"
   random_project_id       = "true"
